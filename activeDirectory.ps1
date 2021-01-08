@@ -32,7 +32,7 @@ Import-CSV "C:\import.csv" | ForEach-Object {
 }
 
 # Update proxyAddresses list
-Import-CSV "C:\temp\34addProxyAddresses.csv" | ForEach-Object {
+Import-CSV "C:\import.csv" | ForEach-Object {
     $name = $_.samName
     $proxy = $_.proxyAddresses -split ';'
     Set-ADUser -Identity $name -Add @{proxyAddresses = $proxy }
