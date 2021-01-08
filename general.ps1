@@ -1,15 +1,3 @@
-# Set proxyAddresses attribute with multiple entries for users via CSV
-Import-CSV "C:\file.csv" | ForEach-Object {
-    $name = $_.samName
-    $proxy = $_.proxyAddresses -split ';'
-    Set-ADUser -Identity $name -Add @{proxyAddresses = $proxy}
-}
-
-#Set the custom attribute for users via CSV
-Import-CSV "C:\file.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.user -add @{extensionAttribute1 = $_.mail}
-}
-
 #Report of all users who have Full Access permission on this mailbox
 Get-MailboxPermission -Identity santarosasub@esba.org | Where { ($_.IsInherited -eq $False) -and -not ($_.User -like "NT AUTHORITY\SELF") } | Export-Csv -Path "C:\Users\Tung.Mach\Downloads\mailboxCheck.csv"
 
@@ -20,27 +8,6 @@ Get-Mailbox -Identity santarosasub@esba.org | select PrimarySmtpAddress,GrantSen
 Import-CSV "C:\temp\passwordExpiration.csv" | ForEach-Object {
     Set-MsolUser -UserPrincipalName $_.upn -PasswordNeverExpires $true
 }
-
-
-#Step 28 - Change service account emails to their respective company domain
-Connect-EXOPSSession
-Import-CSV "C:\temp\svcUpdate.csv" | ForEach-Object {
-    Set-Mailbox $_.svc -WindowsEmailAddress $_.email
-}
-
-#Step 29 - For new hires, update email address to the custom attribute (extensionAttribute1)
-#DONE
-Import-CSV "C:\temp\28setAttribute.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.user -add @{extensionAttribute1 = $_.mail}
-}
-
-
-
-
-
-
-#Get AD Users report
-Get-ADUser -Filter * -SearchBase ‘OU=Personnel,DC=esba,DC=internal’ -Properties * | select-object name, samaccountname, mail, enabled, extensionattribute1, UserPrincipalName, @{"name"="proxyaddresses";"expression"={$_.proxyaddresses}} | Export-CSV -Path "C:\Users\Tung.Mach\Downloads\FOCReport.csv"
 
 #Get AD DL report
 Get-ADGroup -Filter * -SearchBase ‘OU=Distribution Lists,OU=Personnel,DC=esba,DC=internal’ -Properties * | select-object name, samaccountname, mail, @{"name"="proxyaddresses";"expression"={$_.proxyaddresses}} | Export-CSV -Path "C:\Users\Tung.Mach\Downloads\ADGroupReport.csv"
@@ -57,48 +24,6 @@ Import-CSV "C:\addGuests.csv" | ForEach-Object {
     # Add ESH guest users to All Family of Companies team
     Add-TeamUser -GroupId d801a620-ed4e-464a-af96-e7d3f2b04110 -User $_.email
 }
-
-
-
-#Step 32 - Update user's mail attribute field with a new one (DONE)
-Import-CSV "C:\temp\32newEmailAddresses.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.user -EmailAddress $_.email
-}
-
-#Step 33 - Remove old Primary SMTP from proxyAddresses (DONE)
-Import-CSV "C:\temp\33dropSMTP.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.name -Remove @{proxyAddresses = $_.proxy}
-}
-
-#Step 34 - Update proxyAddresses list (new SMTP, previous primary as smtp)
-Import-CSV "C:\temp\34addProxyAddresses.csv" | ForEach-Object {
-    $name = $_.samName
-    $proxy = $_.proxyAddresses -split ';'
-    Set-ADUser -Identity $name -Add @{proxyAddresses = $proxy }
-}
-
-#Step 35 - Remove SIP
-Import-CSV "C:\temp\35removeSIP.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.name -Remove @{proxyAddresses = $_.proxy}
-}
-
-#Step 35 - Add SIP
-Import-CSV "C:\temp\35addSIP.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.name -Add @{proxyAddresses = $_.proxy}
-}
-
-#Step 36 - Change all user's UPN
-Import-CSV "C:\temp\changeADupn2.csv" | ForEach-Object {
-    Set-ADUser -Identity $_.samName -UserPrincipalName $_.upn
-}
-
-#Step 37 - Change UPN on Office 365 for all users
-Connect-MsolService
-Import-CSV "C:\temp\37changeO365upn.csv" | ForEach-Object {
-    Set-MsolUserPrincipalName -UserPrincipalName $_.oldUPN -NewUserPrincipalName $_.newUPN
-}
-
-
 
 Import-CSV "C:\temp\newHiresTeams.csv" | ForEach {Add-TeamUser -GroupId $_.groupID -User $_.member}
 
