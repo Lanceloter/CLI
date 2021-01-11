@@ -1,3 +1,10 @@
+Start-Transcript
+Stop-Transcript
+Enter-Pssession
+Test-ComputerSecureChannel -Repair -verbose
+Test-NetConnection
+
+
 #Report of all users who have Full Access permission on this mailbox
 Get-MailboxPermission -Identity santarosasub@esba.org | Where { ($_.IsInherited -eq $False) -and -not ($_.User -like "NT AUTHORITY\SELF") } | Export-Csv -Path "C:\Users\Tung.Mach\Downloads\mailboxCheck.csv"
 
