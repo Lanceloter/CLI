@@ -1,0 +1,94 @@
+# Windows and Linux Terminals & Command Lines
+c:\> denotes a command to be run from Windows
+user$ is for a Linux command
+
+# show current directory
+c:\> cd
+user$ pwd
+
+# show files in current directory
+c:\> dir
+user$ ls -l
+
+$ copy a file
+c:\> copy file.txt copy.txt
+user cp file.txt copy.txt
+
+# erase a file
+c:\> erase file.txt
+user$ rm file.txt
+
+# print contents of a file
+c:\> type file.txt
+user$ cat file.txt
+
+# show current user
+c:\> whoami
+user$ whoami
+
+# find files in a filesystem
+c:\> dir c:\ /b/s | find "example"
+user$ find / -name *example*
+user$ locate example
+
+# view all environment variables
+c:\> set
+user$ env
+
+# find ports the computer is listening for connections on
+c:\> netstat -naob
+root$ netstat -pant
+
+# find lines containing specific text
+c:\> netstat -naob | find 9999
+user$ netstat -pant | grep 9999
+
+# see running tasks
+c:\> tasklist
+c:\> wmic process list full
+user$ ps -aux
+
+# get more info about a specific process id
+c:\> wmic process where | ProcessID=6666
+user$ ps -Flww -p 6666
+
+# get system's hostname
+c:\> hostname
+user$ hostname
+
+$ list processess that run at startup
+c:\> wmic startup full list
+user$ crontab -l
+user$ systemctl list-unit-files | grep enabled
+user$ ls -l /etc/init.d
+user$ less /home/user/.bashrc
+# There are other places where startup tasks
+can be stored in Linux, but these are the
+most common
+
+# scan a host to look for open ports
+nmap 192.168.1.100
+user$ 192.168.1.100
+
+# scan subnet of hosts and look for open ports
+c:\> nmap 192.168.1.1-254 -sV
+user$ nmap 192.168.1.1-254 -sV
+
+# scan all 65,536 ports on a given host
+c:\> nmap 192.168.1.100 -p0-65535
+user$ nmap 192.168.1.100 -p0-65535
+
+$ ping another host
+c:\> ping 192.168.1.200
+user$ ping -c4 192.168.1.200
+
+# see current IP addresses
+c:\> ipconfig
+user$ ifconfig
+user$ ip addr
+
+# get help for a command
+c:\> cd /?
+user$ man cd
+user$ cd --help
+
